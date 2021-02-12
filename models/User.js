@@ -1,4 +1,4 @@
-const { Schema, mdoel } = require('mongoose')
+const { Schema, model } = require('mongoose')
 
 const userSchema = new Schema(
   {
@@ -35,7 +35,10 @@ const userSchema = new Schema(
   }
 )
 
-userSchame.virtual('friendCount').get(() => {
+userSchema.virtual('friendCount').get(() => {
+  if (!this.friends) {
+    return 0
+  }
   return this.friends.length
 })
 

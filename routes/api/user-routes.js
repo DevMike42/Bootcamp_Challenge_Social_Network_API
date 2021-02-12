@@ -1,9 +1,13 @@
 const router = require('express').Router()
+const {
+  createUser,
+  getUsers
+} = require('../../controllers/user-controller')
 
 // /api/users
-router.route('/').get((req, res) => {
-  res.send('Working')
-})
+router.route('/')
+  .post(createUser)
+  .get(getUsers)
 
 
 module.exports = router
