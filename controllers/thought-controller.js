@@ -30,6 +30,18 @@ const thoughtController = {
         console.error(err)
         res.status(500).json(err)
       })
+  },
+  // Get a Single Thought by ID
+  getSingleThought: (req, res) => {
+    Thought.findOne({ _id: req.params.thoughtId })
+      .then(dbThoughtData => {
+        !dbThoughtData ? res.status(404).json({ message: `No thought found for id:${req.params.thoughtId}` })
+          : res.json(dbThoughtData)
+      })
+      .catch(err => {
+        console.error(err)
+        res.status(500).json(err)
+      })
   }
 }
 
