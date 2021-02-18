@@ -42,6 +42,41 @@ const thoughtController = {
         console.error(err)
         res.status(500).json(err)
       })
+  },
+  // Update a Single Thought by ID
+  updateThought: (req, res) => {
+    Thought.findOneAndUpdate({ _id: req.params.thoughtId }, { $set: req.body }, { runValidators: true, new: true })
+      .then(dbThoughtData => {
+        !dbThoughtData ? res.status(404).json({ message: `No thought found for id:${req.params.thoughtId}` })
+          : res.json(dbThoughtData)
+      })
+      .catch(err => {
+        console.error(err)
+        res.status(500).json(err)
+      })
+  },
+  // Delete a Single Thought by ID
+  deleteThought: (req, res) => {
+    Thought.findOneAndRemove({ _id: req.params.thoughtId })
+      .then(dbThoughtData => {
+        if (!dbThoughtData) {
+          res.status(404).json({ message: `No thought found with id:${req.params.thoughtId}` })
+        }
+
+        return User.findOneAndUpdate(
+          { thoughts: req.params.thoughtId },
+          { $pull: { thoughts: req.params.thoughtId } },
+          { new: true }
+        )
+      })
+      .then(dbUserData => {
+        !dbUserData ? res.status(404).json({ message: `Thought created but no user with this id` })
+          : res.json({ message: 'Thought successfully deleted!' })
+      })
+      .catch(err => {
+        console.error(err)
+        res.status(500).json(err)
+      })
   }
 }
 
