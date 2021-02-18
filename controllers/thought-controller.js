@@ -77,6 +77,38 @@ const thoughtController = {
         console.error(err)
         res.status(500).json(err)
       })
+  },
+  // Add a Reaction to a Thought
+  addReaction: (req, res) => {
+    Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $addToSet: { reactions: req.body } },
+      { runValidators: true, new: true }
+    )
+      .then(dbThoughtData => {
+        !dbThoughtData ? res.status(404).json({ message: `No thought found with id:${req.params.thoughtId}` })
+          : res.status(201).json(dbThoughtData)
+      })
+      .catch(err => {
+        console.error(err)
+        res.status(500).json(err)
+      })
+  },
+  // Remove a reaction from a Thought
+  removeReaction: (req, res) => {
+    Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $pull: { reactions: { reactionId: req.params.reactionId } } },
+      { runValidators: true, new: true }
+    )
+      .then(dbThoughtData => {
+        !dbThoughtData ? res.status(404).json({ message: `No thought found with id:${req.params.thoughtId}` })
+          : res.json({ message: 'Reaction successfully removed!' })
+      })
+      .catch(err => {
+        console.error(err)
+        res.status(500).json(err)
+      })
   }
 }
 
